@@ -86,12 +86,22 @@ class GenerationService:
                 logger.error(f"Groq routing error: {e}. Falling back to rule-based classification.")
 
         # Heuristic fallback if LLM is unreachable or key missing
-        q_lower = query.strip().lower()
-        greetings = {"hi", "hello", "hey", "good morning", "good evening", "how are you", "thanks", "thank you"}
-        if q_lower in greetings or any(q_lower.startswith(g + " ") for g in ["hi", "hello", "hey"]):
+        q_cleaned = query.strip(" '\"`.,!?;:").lower()
+        greetings = [
+            "hi", "hello", "hey", "good morning", "good evening", "good afternoon",
+            "how are you", "howdy", "greetings", "thanks", "thank you", "bye", "goodbye"
+        ]
+        if any(q_cleaned == g or q_cleaned.startswith(g) or g in q_cleaned for g in greetings):
             return "chitchat"
 
-        # Default to retrieve for general queries
+        off_topics = [
+            "weather", "math", "calculator", "crypto", "bitcoin", "football",
+            "basketball", "recipe", "bake", "python code", "capital of", "quantum"
+        ]
+        if any(ot in q_cleaned for ot in off_topics):
+            return "off-topic"
+
+        # Default to retrieve for book queries
         return "retrieve"
 
     def handle_chitchat(self, query: str) -> str:
