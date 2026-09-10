@@ -168,8 +168,8 @@ Create a `.env` file in the project root (or inside `backend/` and `frontend/`) 
 
 ### 1. Clone Repository & Setup Virtual Environment
 ```bash
-git clone https://github.com/<your-username>/rag-assistant-app.git
-cd rag-assistant-app
+git clone https://github.com/abdelrahman00mohamed1/ITI_RaG_Project.git
+cd ITI_RaG_Project
 
 # Create virtual environment
 python -m venv .venv
