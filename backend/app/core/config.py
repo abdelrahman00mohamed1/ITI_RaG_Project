@@ -44,7 +44,7 @@ class Settings(BaseSettings):
         description="Google Generative AI API Key",
     )
     GEMINI_MODEL: str = Field(
-        default="gemini-1.5-flash",
+        default="gemini-3.5-flash",
         description="Google Gemini model identifier",
     )
 
@@ -54,7 +54,7 @@ class Settings(BaseSettings):
         description="Groq API Key",
     )
     GROQ_MODEL: str = Field(
-        default="llama-3.3-70b-versatile",
+        default="openai/gpt-oss-120b",
         description="Groq model identifier for query routing",
     )
 
