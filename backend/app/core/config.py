@@ -34,7 +34,7 @@ class Settings(BaseSettings):
         description="ChromaDB collection name",
     )
     TOP_K: int = Field(
-        default=3,
+        default=5,
         description="Number of chunks to retrieve",
     )
 
