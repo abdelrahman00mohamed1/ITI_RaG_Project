@@ -32,6 +32,25 @@ STRICT GROUNDING INSTRUCTIONS:
 4. If the Context contains the answer, be concise, clear, and factual. You may cite the relevant book name and page number mentioned in the context brackets."""
 
 
+def _extract_text(content) -> str:
+    """Safely extracts text whether content is a string, list of dicts, or objects."""
+    if isinstance(content, str):
+        return content.strip()
+    if isinstance(content, list):
+        parts = []
+        for item in content:
+            if isinstance(item, str):
+                parts.append(item)
+            elif isinstance(item, dict) and "text" in item:
+                parts.append(item["text"])
+            elif hasattr(item, "text"):
+                parts.append(str(getattr(item, "text")))
+            else:
+                parts.append(str(item))
+        return "".join(parts).strip()
+    return str(content).strip()
+
+
 class GenerationService:
     """Handles query routing, conversational chit-chat, and grounded Gemini RAG generation."""
 
@@ -78,7 +97,7 @@ class GenerationService:
                     SystemMessage(content=ROUTER_SYSTEM_PROMPT),
                     HumanMessage(content=query),
                 ])
-                route = response.content.strip().lower()
+                route = _extract_text(response.content).lower()
                 for valid_route in ("retrieve", "chitchat", "off-topic"):
                     if valid_route in route:
                         return valid_route
@@ -112,7 +131,7 @@ class GenerationService:
                     SystemMessage(content=CHITCHAT_SYSTEM_PROMPT),
                     HumanMessage(content=query),
                 ])
-                return response.content.strip()
+                return _extract_text(response.content)
             except Exception as e:
                 logger.error(f"Chitchat generation error: {e}")
 
@@ -141,7 +160,7 @@ class GenerationService:
                 SystemMessage(content=RAG_SYSTEM_PROMPT),
                 HumanMessage(content=user_content),
             ])
-            return response.content.strip()
+            return _extract_text(response.content)
         except Exception as e:
             logger.error(f"Gemini generation error: {e}")
             return f"An error occurred while communicating with the generation model: {e}"
